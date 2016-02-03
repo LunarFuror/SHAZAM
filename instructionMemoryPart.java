@@ -1,53 +1,53 @@
 public class instructionMemoryPart {
-	byte b1,b2,b3,b4;
+	byte ib1,ib2,ib3,ib4;
 	instructionMemoryPart(){
-		b1 = 0x0;
-		b2 = 0x0;
-		b3 = 0x0;
-		b4 = 0x0;
+		ib1 = 0x0;
+		ib2 = 0x0;
+		ib3 = 0x0;
+		ib4 = 0x0;
 	}
 	
-	instructionMemoryPart(byte nb1,byte nb2,byte nb3,byte nb4){
-		b1 = nb1;
-		b2 = nb2;
-		b3 = nb3;
-		b4 = nb4;
+	instructionMemoryPart(byte nib1,byte nib2,byte nib3,byte nib4){
+		ib1 = nib1;
+		ib2 = nib2;
+		ib3 = nib3;
+		ib4 = nib4;
 	}
 
-	public byte getB1() {
-		return b1;
+	public byte getIB1() {
+		return ib1;
 	}
 
-	public void setB1(byte b1) {
-		this.b1 = b1;
+	public void setIB1(byte ib1) {
+		this.ib1 = ib1;
 	}
 
-	public byte getB2() {
-		return b2;
+	public byte getIB2() {
+		return ib2;
 	}
 
-	public void setB2(byte b2) {
-		this.b2 = b2;
+	public void setIB2(byte ib2) {
+		this.ib2 = ib2;
 	}
 
-	public byte getB3() {
-		return b3;
+	public byte getIB3() {
+		return ib3;
 	}
 
-	public void setB3(byte b3) {
-		this.b3 = b3;
+	public void setIB3(byte ib3) {
+		this.ib3 = ib3;
 	}
 
-	public byte getB4() {
-		return b4;
+	public byte getIB4() {
+		return ib4;
 	}
 
-	public void setB4(byte b4) {
-		this.b4 = b4;
+	public void setIB4(byte ib4) {
+		this.ib4 = ib4;
 	}
 	
 	public byte[] getByteArray(){
-		byte[] output = {b1,b2,b3,b4};
+		byte[] output = {ib1,ib2,ib3,ib4};
 		return output;
 	}
 }
