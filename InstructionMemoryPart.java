@@ -1,59 +1,69 @@
 public class InstructionMemoryPart {
-	byte ib1,ib2,ib3,ib4;
+	byte db1,db2,db3,db4,db5;
 	InstructionMemoryPart(){
-		ib1 = 0x0;
-		ib2 = 0x0;
-		ib3 = 0x0;
-		ib4 = 0x0;
+		db1 = 0x0;
+		db2 = 0x0;
+		db3 = 0x0;
+		db4 = 0x0;
+		db5 = 0x0;
 	}
 	
-	InstructionMemoryPart(byte nib1,byte nib2,byte nib3,byte nib4){
-		ib1 = nib1;
-		ib2 = nib2;
-		ib3 = nib3;
-		ib4 = nib4;
+	InstructionMemoryPart(byte nib1,byte nib2,byte nib3,byte nib4,byte nib5){
+		db1 = nib1;
+		db2 = nib2;
+		db3 = nib3;
+		db4 = nib4;
+		db5 = nib5;
 	}
 
-	public byte getIB1() {
-		return ib1;
+	public byte getDB1() {
+		return db1;
 	}
 
-	public void setIB1(byte ib1) {
-		this.ib1 = ib1;
+	public void setDB1(byte db1) {
+		this.db1 = db1;
 	}
 
-	public byte getIB2() {
-		return ib2;
+	public byte getDB2() {
+		return db2;
 	}
 
-	public void setIB2(byte ib2) {
-		this.ib2 = ib2;
+	public void setDB2(byte db2) {
+		this.db2 = db2;
 	}
 
-	public byte getIB3() {
-		return ib3;
+	public byte getDB3() {
+		return db3;
 	}
 
-	public void setIB3(byte ib3) {
-		this.ib3 = ib3;
+	public void setDB3(byte db3) {
+		this.db3 = db3;
 	}
 
-	public byte getIB4() {
-		return ib4;
+	public byte getDB4() {
+		return db4;
 	}
 
-	public void setIB4(byte ib4) {
-		this.ib4 = ib4;
+	public void setDB4(byte db4) {
+		this.db4 = db4;
+	}
+
+	public byte getDB5() {
+		return db5;
+	}
+
+	public void setDB5(byte db5) {
+		this.db5 = db5;
 	}
 	
 	public byte[] getByteArray(){
-		byte[] output = {ib1,ib2,ib3,ib4};
+		byte[] output = {db1,db2,db3,db4,db5};
 		return output;
 	}
 	
 	public String ToString(){
 		String output = "";
-		output = Integer.toHexString(ib1) + Integer.toHexString(ib2) + Integer.toHexString(ib3) + Integer.toHexString(ib4);
+		output = Integer.toHexString(db1) + Integer.toHexString(db2) + Integer.toHexString(db3) + Integer.toHexString(db4) + Integer.toHexString(db5);
 		return output;
 	}
 }
