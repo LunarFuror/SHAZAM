@@ -1,59 +1,89 @@
 public class DataMemoryPart {
-	byte ib1,ib2,ib3,ib4;
+	byte DB1,DB2,DB3,DB4;
 	DataMemoryPart(){
-		ib1 = 0x0;
-		ib2 = 0x0;
-		ib3 = 0x0;
-		ib4 = 0x0;
+		DB1 = 0x0;
+		DB2 = 0x0;
+		DB3 = 0x0;
+		DB4 = 0x0;
 	}
 	
-	DataMemoryPart(byte nib1,byte nib2,byte nib3,byte nib4){
-		ib1 = nib1;
-		ib2 = nib2;
-		ib3 = nib3;
-		ib4 = nib4;
+	DataMemoryPart(byte nDB1,byte nDB2,byte nDB3,byte nDB4){
+		DB1 = nDB1;
+		DB2 = nDB2;
+		DB3 = nDB3;
+		DB4 = nDB4;
 	}
 
-	public byte getIB1() {
-		return ib1;
+	public byte getDB1() {
+		return DB1;
 	}
 
-	public void setIB1(byte ib1) {
-		this.ib1 = ib1;
+	public void setDB1(byte DB1) {
+		this.DB1 = DB1;
 	}
 
-	public byte getIB2() {
-		return ib2;
+	public byte getDB2() {
+		return DB2;
 	}
 
-	public void setIB2(byte ib2) {
-		this.ib2 = ib2;
+	public void setDB2(byte DB2) {
+		this.DB2 = DB2;
 	}
 
-	public byte getIB3() {
-		return ib3;
+	public byte getDB3() {
+		return DB3;
 	}
 
-	public void setIB3(byte ib3) {
-		this.ib3 = ib3;
+	public void setDB3(byte DB3) {
+		this.DB3 = DB3;
 	}
 
-	public byte getIB4() {
-		return ib4;
+	public byte getDB4() {
+		return DB4;
 	}
 
-	public void setIB4(byte ib4) {
-		this.ib4 = ib4;
+	public void setDB4(byte DB4) {
+		this.DB4 = DB4;
 	}
 	
 	public byte[] getByteArray(){
-		byte[] output = {ib1,ib2,ib3,ib4};
+		byte[] output = {DB1,DB2,DB3,DB4};
 		return output;
+	}
+	
+	public int getMemoryValue(){
+		int output = Integer.parseUnsignedInt(ToString(), 16);
+		return output;
+	}
+	
+	public void parseString(String input){
+		int length = input.length();
+		switch(length){
+			case 1: 
+				setDB4((byte)Integer.parseUnsignedInt(input, 16)); 
+				break;
+			case 2: 
+				setDB3((byte)Integer.parseUnsignedInt(input.substring(0, 1), 16));
+				setDB4((byte)Integer.parseUnsignedInt(input.substring(1), 16));
+				break;
+			case 3: 
+				setDB2((byte)Integer.parseUnsignedInt(input.substring(0, 1), 16));
+				setDB3((byte)Integer.parseUnsignedInt(input.substring(1, 2), 16));
+				setDB4((byte)Integer.parseUnsignedInt(input.substring(2), 16));
+				break;
+			case 4: 
+				setDB1((byte)Integer.parseUnsignedInt(input.substring(0, 1), 16));
+				setDB2((byte)Integer.parseUnsignedInt(input.substring(1, 2), 16));
+				setDB3((byte)Integer.parseUnsignedInt(input.substring(2, 3), 16));
+				setDB4((byte)Integer.parseUnsignedInt(input.substring(3), 16));
+				break;
+			default: break;
+		}
 	}
 	
 	public String ToString(){
 		String output = "";
-		output = Integer.toHexString(ib1) + Integer.toHexString(ib2) + Integer.toHexString(ib3) + Integer.toHexString(ib4);
+		output = Integer.toHexString(DB1) + Integer.toHexString(DB2) + Integer.toHexString(DB3) + Integer.toHexString(DB4);
 		return output;
 	}
 }

@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.Vector;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -7,12 +8,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 public class ShazamUI {
+	private static Vector<String> inputs = new Vector<String>();
 	private static InstructionMemoryPart[][] instructionMemory = new InstructionMemoryPart[0x40][0xF+1];
 	private static DataMemoryPart[][] dataMemory = new DataMemoryPart[0x80][0xF+1];
+	private static InstructionMemoryPart ir = new InstructionMemoryPart();
 	private static Register p = new Register();
 	private static Register b = new Register();
 	private static Register t = new Register();
-	private static Register ir = new Register();
 	private static Register r1 = new Register();
 	private static Register r2 = new Register();
 	private static Register r3 = new Register();
@@ -24,6 +26,7 @@ public class ShazamUI {
 	}
 	
 	public void run(){
+		clear();
 		String choice = "";
 		Scanner userIn = new Scanner(System.in);
 		
@@ -35,12 +38,15 @@ public class ShazamUI {
 			switch(choice){
 				case "clear": 
 					clear();
+					System.out.println("Memory Cleared");
 					break;
 				case "dump": 
 					dump();
+					System.out.println("Memory Dumped");
 					break;
 				case "load": 
 					load();
+					System.out.println("Memory Loaded");
 					break;
 				case "exit": 
 					break;
@@ -80,7 +86,6 @@ public class ShazamUI {
 			}
 		}
 		
-		System.out.println("Memory Cleared");
 	}
 	
 	//Dump all the things!
@@ -137,7 +142,7 @@ public class ShazamUI {
 				//print page
 				writer.print("\r\n");
 				if(i==0x0D){
-					writer.print("Memory Dump--Instruction Memory\t\tPage 2");
+					writer.println("Memory Dump--Instruction Memory\t\tPage 2");
 				}
 			}
 			//print ending
@@ -166,12 +171,84 @@ public class ShazamUI {
 		
 		//read instructions
 		while(fileIn.hasNextLine()){
-			String[] insLine = fileIn.nextLine().toLowerCase().split(" ");
+			String thisLine = fileIn.nextLine();
+			String[] insLine = thisLine.toLowerCase().split(" ");
+			String fieldL = "";
+			String fieldN = "";
+			String fieldNC = "";
+			int location = 0;
+			int subLocation = 0;
+			int numInstructions = 0;
+			
 			switch (insLine[0]){
+				//parse instruction loading
 				case "i": 
+					fieldL = insLine[1];
+					fieldN = insLine[2];
+					if(insLine.length == 4){
+						fieldNC = insLine[3];
+					}
+					
+					location = Integer.parseUnsignedInt(fieldL.substring(0, 2),16);
+					subLocation = Integer.parseUnsignedInt(fieldL.substring(2),16);
+					
+					numInstructions = Integer.parseUnsignedInt(fieldN, 16);
+					
+					if(numInstructions > 0xE){
+						throw new IndexOutOfBoundsException();
+					}
+					else if(numInstructions == 0){
+						p.parseString(fieldL);
+					}
+					else{
+						for(int i = 0; i <= numInstructions; i++){
+							if((i*5)+5 < fieldNC.length()-1){
+								instructionMemory[location][subLocation + i].parseString(fieldNC.substring(i*5, (i*5)+5));
+							}
+							else{
+								instructionMemory[location][subLocation + i].parseString(fieldNC.substring(i*5));
+							}
+						}
+					}
 					break;
+					
+					//parse data loading
 				case "d": 
+					fieldL = insLine[1];
+
+					if(insLine[2].length() > 2){
+						fieldN = insLine[2].substring(0, 2);
+						fieldNC = insLine[2].substring(2);
+					}
+					else{
+						fieldN = insLine[2];
+					}
+					
+					location = Integer.parseUnsignedInt(fieldL.substring(0, 2),16);
+					subLocation = Integer.parseUnsignedInt(fieldL.substring(2),16);
+					
+					numInstructions = Integer.parseUnsignedInt(fieldN, 16);
+					
+					if(numInstructions > 0xE){
+						throw new IndexOutOfBoundsException();
+					}
+					else if(numInstructions == 0){
+						t.parseString(fieldL);
+					}
+					else{
+						for(int i = 0; i <= numInstructions; i++){
+							if((i*4)+4 < fieldNC.length()-1){
+								dataMemory[location][subLocation + i].parseString(fieldNC.substring(i*4, (i*4)+4));
+							}
+							else{
+								dataMemory[location][subLocation + i].parseString(fieldNC.substring(i*4));
+							}
+						}
+					}
 					break;
+					
+					//dump the rest into input
+				default: inputs.add(thisLine); break;
 			}
 		}
 		fileIn.close();

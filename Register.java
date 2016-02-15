@@ -43,6 +43,30 @@ public class Register {
 		return output;
 	}
 	
+	public int getMemoryValue(){
+		int output = Integer.parseUnsignedInt(ToString(), 16);
+		return output;
+	}
+	
+	public void parseString(String input){
+		int length = input.length();
+		switch(length){
+			case 1: 
+				setRb3((byte)Integer.parseUnsignedInt(input, 16)); 
+				break;
+			case 2: 
+				setRb2((byte)Integer.parseUnsignedInt(input.substring(0, 1), 16));
+				setRb3((byte)Integer.parseUnsignedInt(input.substring(1), 16));
+				break;
+			case 3: 
+				setRb1((byte)Integer.parseUnsignedInt(input.substring(0, 1), 16));
+				setRb2((byte)Integer.parseUnsignedInt(input.substring(1, 2), 16));
+				setRb3((byte)Integer.parseUnsignedInt(input.substring(2), 16));
+				break;
+			default: break;
+		}
+	}
+	
 	public String ToString(){
 		String output = "";
 		output = Integer.toHexString(rb1) + Integer.toHexString(rb2) + Integer.toHexString(rb3);
