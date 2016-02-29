@@ -37,6 +37,9 @@ public class InstructionMemoryPart {
 	}
 
 	public void setIB3(byte IB3) {
+		if(IB3 > 0x7){
+			throw new IndexOutOfBoundsException();
+		}
 		this.IB3 = IB3;
 	}
 
