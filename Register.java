@@ -52,9 +52,12 @@ public class Register {
 		int length = input.length();
 		switch(length){
 			case 1: 
+				setRb1((byte)0); 
+				setRb2((byte)0); 
 				setRb3((byte)Integer.parseUnsignedInt(input, 16)); 
 				break;
-			case 2: 
+			case 2:
+				setRb1((byte)0); 
 				setRb2((byte)Integer.parseUnsignedInt(input.substring(0, 1), 16));
 				setRb3((byte)Integer.parseUnsignedInt(input.substring(1), 16));
 				break;

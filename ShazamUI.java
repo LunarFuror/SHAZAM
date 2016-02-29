@@ -22,10 +22,6 @@ public class ShazamUI {
 	private static Register r5 = new Register();
 	
 	public ShazamUI(){
-		//dormant Shaq goes here for further use
-	}
-	
-	public void run(){
 		clear();
 		String choice = "";
 		Scanner userIn = new Scanner(System.in);
@@ -57,6 +53,10 @@ public class ShazamUI {
 		userIn.close();
 	}
 	
+	public void run(){
+		
+	}
+	
 	//Print all the things!
 	public void printMenu(){
 		System.out.println("Type your choice and hit enter\n" +
@@ -71,7 +71,12 @@ public class ShazamUI {
 		b = new Register();
 		p = new Register();
 		t = new Register();
-
+		r1.parseString("000");
+		r2.parseString("000");
+		r3.parseString("000");
+		r4.parseString("000");
+		r5.parseString("000");
+		ir.parseString("00000");
 		//clear data
 		for(int i = 0x0; i < dataMemory.length; i++){
 			for(int j = 0x0; j < dataMemory[i].length; j++){

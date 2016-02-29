@@ -73,18 +73,28 @@ public class InstructionMemoryPart {
 		int length = input.length();
 		switch(length){
 			case 1: 
+				setIB1((byte)0); 
+				setIB2((byte)0); 
+				setIB3((byte)0); 
+				setIB4((byte)0); 
 				setIB5((byte)Integer.parseUnsignedInt(input, 16)); 
 				break;
 			case 2: 
+				setIB1((byte)0); 
+				setIB2((byte)0); 
+				setIB3((byte)0); 
 				setIB4((byte)Integer.parseUnsignedInt(input.substring(0, 1), 16));
 				setIB5((byte)Integer.parseUnsignedInt(input.substring(1), 16));
 				break;
 			case 3: 
+				setIB1((byte)0); 
+				setIB2((byte)0); 
 				setIB3((byte)Integer.parseUnsignedInt(input.substring(0, 1), 16));
 				setIB4((byte)Integer.parseUnsignedInt(input.substring(1, 2), 16));
 				setIB5((byte)Integer.parseUnsignedInt(input.substring(2), 16));
 				break;
 			case 4: 
+				setIB1((byte)0); 
 				setIB2((byte)Integer.parseUnsignedInt(input.substring(0, 1), 16));
 				setIB3((byte)Integer.parseUnsignedInt(input.substring(1, 2), 16));
 				setIB4((byte)Integer.parseUnsignedInt(input.substring(2, 3), 16));

@@ -60,13 +60,19 @@ public class DataMemoryPart {
 		int length = input.length();
 		switch(length){
 			case 1: 
-				setDB4((byte)Integer.parseUnsignedInt(input, 16)); 
+				setDB1((byte)0);
+				setDB2((byte)0);
+				setDB3((byte)0);
+				setDB4((byte)Integer.parseUnsignedInt(input, 16));
 				break;
 			case 2: 
+				setDB1((byte)0);
+				setDB2((byte)0);
 				setDB3((byte)Integer.parseUnsignedInt(input.substring(0, 1), 16));
 				setDB4((byte)Integer.parseUnsignedInt(input.substring(1), 16));
 				break;
 			case 3: 
+				setDB1((byte)0);
 				setDB2((byte)Integer.parseUnsignedInt(input.substring(0, 1), 16));
 				setDB3((byte)Integer.parseUnsignedInt(input.substring(1, 2), 16));
 				setDB4((byte)Integer.parseUnsignedInt(input.substring(2), 16));
