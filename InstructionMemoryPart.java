@@ -21,6 +21,9 @@ public class InstructionMemoryPart {
 	}
 
 	public void setIB1(byte IB1) {
+		if(IB1 > (byte)0x7){
+			throw new InternalError();
+		}
 		this.IB1 = IB1;
 	}
 
@@ -38,7 +41,7 @@ public class InstructionMemoryPart {
 
 	public void setIB3(byte IB3) {
 		if(IB3 > (byte)0x7){
-			throw new IndexOutOfBoundsException();
+			throw new InternalError();
 		}
 		this.IB3 = IB3;
 	}

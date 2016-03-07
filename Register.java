@@ -37,6 +37,18 @@ public class Register {
 	public void setRb3(byte rb3) {
 		this.rb3 = rb3;
 	}
+	
+	public int getRow(){
+		String output = "";
+		output = Integer.toHexString(rb1) + Integer.toHexString(rb2);
+		return Integer.parseUnsignedInt(output);
+	}
+	
+	public int getColumn(){
+		String output = "";
+		output = Integer.toHexString(rb3);
+		return Integer.parseUnsignedInt(output);
+	}
 
 	public byte[] getByteArray(){
 		byte[] output = {rb1, rb2, rb3};

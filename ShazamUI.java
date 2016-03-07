@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.Stack;
 import java.util.Vector;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,7 +21,10 @@ public class ShazamUI {
 	private static Register r3 = new Register();
 	private static Register r4 = new Register();
 	private static Register r5 = new Register();
+	private static Stack<DataMemoryPart> stack = new Stack<DataMemoryPart>();
 	
+	//Start all the things!
+	//Still gotta find a space for Tucker and Dale reference...
 	public ShazamUI(){
 		clear();
 		String choice = "";
@@ -44,6 +48,9 @@ public class ShazamUI {
 					load();
 					System.out.println("Memory Loaded");
 					break;
+				case "run": 
+					run();
+					break;
 				case "exit": 
 					break;
 				default: break;
@@ -53,16 +60,13 @@ public class ShazamUI {
 		userIn.close();
 	}
 	
-	public void run(){
-		
-	}
-	
 	//Print all the things!
 	public void printMenu(){
 		System.out.println("Type your choice and hit enter\n" +
 				"Clear\n" +
 				"Dump\n" +
 				"Load\n" +
+				"Run\n" +
 				"Exit");
 	}
 	
@@ -70,7 +74,7 @@ public class ShazamUI {
 	public void clear(){
 		b = new Register();
 		p = new Register();
-		t = new Register();
+		t = new Register((byte)0x0,(byte)0x0,(byte)0x2);
 		r1.parseString("000");
 		r2.parseString("000");
 		r3.parseString("000");
@@ -258,4 +262,64 @@ public class ShazamUI {
 		}
 		fileIn.close();
 	}
+
+	public void run(){
+		String output = "";
+		boolean done = false;
+		//print trace out
+		output += "Interpreter --- Begin at location " + p.toString() + "  B = " + b.toString() + "  T = " + t.toString() + "\n"
+				+ "Trace is... On\n";
+		//while !done
+		while(!done){
+			//IR = instructionMemory[p]
+			ir = instructionMemory[p.getRow()][p.getColumn()];
+			//p++
+			p.parseString(Integer.toHexString(p.getMemoryValue()+1));
+			//parse code
+			switch(ir.getIB1()){
+				case (byte)0x0:
+					//push ib3,4,5 signed int onto stack
+					break;
+				case (byte)0x1:
+					//opr chart thing in interprate pdf
+					break;
+				case (byte)0x2:
+					//
+					break;
+				case (byte)0x3:
+					//
+					break;
+				case (byte)0x4:
+					//call subroutine
+					break;
+				case (byte)0x5:
+					//incriment t by ir345's amount (ir345 is 11 bits so 7FF = -1)
+					break;
+				case (byte)0x6:
+						switch(ir.getIB2()){
+							case (byte)0x0:
+								//don't pop stack, but get next instruction from ir345
+								break;
+							case (byte)0x1:
+								//pop stack, if value is not 0 get instruction at that address, else get next instruction
+								break;
+							case (byte)0x2:
+								//pop stack and load p with it
+								break;
+							case (byte)0x3:
+								//load p with ir345 and halt program
+								p.parseString(Integer.toHexString(ir.getIB3()) + Integer.toHexString(ir.getIB4()) +Integer.toHexString(ir.getIB5()));
+								done = true;
+								break;
+						}
+					break;
+				case (byte)0x7:
+					//
+					break;
+			}
+			//print output
+			//loop
+		}
+	}
+	
 }
