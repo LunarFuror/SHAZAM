@@ -277,43 +277,63 @@ public class ShazamUI {
 			p.parseString(Integer.toHexString(p.getMemoryValue()+1));
 			//parse code
 			switch(ir.getIB1()){
-				case (byte)0x0:
-					//push ib3,4,5 signed int onto stack
+				case (byte)0x0: //LIT
+					//push address signed int onto stack
 					break;
-				case (byte)0x1:
+				case (byte)0x1: //OPR
 					//opr chart thing in interprate pdf
 					break;
-				case (byte)0x2:
-					//
+				case (byte)0x2: //LOD
+					switch(ir.getIB2()){
+						case (byte)0x0: //curent base +/- address = eff.addr.
+							//push value at eff.addr. onto stack 
+							break;
+						case (byte)0x1: //caller's base +/- address = eff.addr.
+							//push value at eff.addr. onto stack 
+							break;
+						case (byte)0x2: //caller's caller's base +/- address = eff.addr.
+							//push value at eff.addr. onto stack 
+							break;
+					}
 					break;
-				case (byte)0x3:
-					//
+				case (byte)0x3: //STO
+					switch(ir.getIB2()){
+						case (byte)0x0: //curent base +/- address = eff.addr.
+							//pop top of stack, put at eff.addr.
+							break;
+						case (byte)0x1: //caller's base +/- address = eff.addr.
+							//pop top of stack, put at eff.addr.
+							break;
+						case (byte)0x2: //caller's caller's base +/- address = eff.addr.
+							//pop top of stack, put at eff.addr.
+							break;
+					}
 					break;
-				case (byte)0x4:
+				case (byte)0x4: //CAL
 					//call subroutine
 					break;
-				case (byte)0x5:
-					//incriment t by ir345's amount (ir345 is 11 bits so 7FF = -1)
+				case (byte)0x5: //INT
+					//incriment t by address amount (address is 11 bits so 7FF = -1)
 					break;
-				case (byte)0x6:
-						switch(ir.getIB2()){
-							case (byte)0x0:
-								//don't pop stack, but get next instruction from ir345
-								break;
-							case (byte)0x1:
-								//pop stack, if value is not 0 get instruction at that address, else get next instruction
-								break;
-							case (byte)0x2:
-								//pop stack and load p with it
-								break;
-							case (byte)0x3:
-								//load p with ir345 and halt program
-								p.parseString(Integer.toHexString(ir.getIB3()) + Integer.toHexString(ir.getIB4()) +Integer.toHexString(ir.getIB5()));
-								done = true;
-								break;
-						}
+				case (byte)0x6: //JMP
+					switch(ir.getIB2()){
+						case (byte)0x0: //JPU
+							//don't pop stack, but get next instruction from address
+							break;
+						case (byte)0x1: //JPC
+							//pop stack, if value is not 0 get instruction at that address, else get next instruction
+							break;
+						case (byte)0x2: //JPT
+							//pop stack and load p with it
+							break;
+						case (byte)0x3: //HLT
+							//load p with ir345 and halt program
+							p.parseString(Integer.toHexString(ir.getIB3()) + Integer.toHexString(ir.getIB4()) +Integer.toHexString(ir.getIB5()));
+							done = true;
+							break;
+					}
 					break;
-				case (byte)0x7:
+				case (byte)0x7: //ADR
 					//
 					break;
 			}
