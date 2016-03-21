@@ -1,5 +1,4 @@
 import java.util.Scanner;
-import java.util.Stack;
 import java.util.Vector;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -157,10 +156,8 @@ public class ShazamUI {
 			writer.print("End Memory Dump--Instruction Memory");
 			writer.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -306,6 +303,12 @@ public class ShazamUI {
 						//opr chart thing in interprate pdf
 						switch(ir.getOpCode()){
 							case "00"://RET
+								//p of calling routine
+								r1.parseString( Integer.toHexString(b.getMemoryValue() + 2) );
+								//b of calling routine
+								r2.parseString( Integer.toHexString(b.getMemoryValue() + 1) );
+								//b of routine at level
+								r3.parseString( Integer.toHexString(b.getMemoryValue()) );
 								break;
 							case "01"://NEG
 								break;
