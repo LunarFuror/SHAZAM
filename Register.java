@@ -60,6 +60,14 @@ public class Register {
 		return output;
 	}
 	
+	public int getSignedValue(){
+		int output = getMemoryValue();
+		if(output > 2048){
+			output -= 4096;
+		}
+		return output;
+	}
+	
 	public void parseString(String input){
 		int length = input.length();
 		switch(length){

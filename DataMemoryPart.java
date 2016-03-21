@@ -46,6 +46,18 @@ public class DataMemoryPart {
 		this.DB4 = DB4;
 	}
 	
+	public int getRow(){
+		String output = "";
+		output = Integer.toHexString(DB2) + Integer.toHexString(DB3);
+		return Integer.parseUnsignedInt(output);
+	}
+	
+	public int getColumn(){
+		String output = "";
+		output = Integer.toHexString(DB4);
+		return Integer.parseUnsignedInt(output);
+	}
+	
 	public byte[] getByteArray(){
 		byte[] output = {DB1,DB2,DB3,DB4};
 		return output;
@@ -85,6 +97,12 @@ public class DataMemoryPart {
 				break;
 			default: break;
 		}
+	}
+	
+	public String getAddress(){
+		String output = "";
+		output = Integer.toHexString(DB2) + Integer.toHexString(DB3) + Integer.toHexString(DB4);
+		return output;
 	}
 	
 	public String ToString(){

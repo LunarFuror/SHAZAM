@@ -72,6 +72,14 @@ public class InstructionMemoryPart {
 		return output;
 	}
 	
+	public int getSignedAddress(){
+		int output = Integer.parseUnsignedInt((Integer.toHexString(getIB3()) + Integer.toHexString(getIB4()) + Integer.toHexString(getIB5())), 16);
+		if(output > 1023){
+			output -= 2048;
+		}
+		return output;
+	}
+	
 	public void parseString(String input){
 		int length = input.length();
 		switch(length){
@@ -112,6 +120,18 @@ public class InstructionMemoryPart {
 				break;
 			default: break;
 		}
+	}
+
+	public String getAddress(){
+		String output = "";
+		output = Integer.toHexString(IB3) + Integer.toHexString(IB4) + Integer.toHexString(IB5);
+		return output;
+	}
+	
+	public String getOpCode(){
+		String output = "";
+		output = Integer.toHexString(IB4) + Integer.toHexString(IB5);
+		return output;
 	}
 	
 	public String ToString(){
