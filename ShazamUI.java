@@ -304,13 +304,32 @@ public class ShazamUI {
 						switch(ir.getOpCode()){
 							case "00"://RET
 								//p of calling routine
-								r1.parseString( Integer.toHexString(b.getMemoryValue() + 2) );
+								//pop top of stack
+								r1.parseString(dataMemory[t.getColumn()][t.getRow()].ToString());
+								t.parseString(Integer.toHexString(t.getMemoryValue()-1));
 								//b of calling routine
-								r2.parseString( Integer.toHexString(b.getMemoryValue() + 1) );
-								//b of routine at level
-								r3.parseString( Integer.toHexString(b.getMemoryValue()) );
+								//pop top of stack
+								r2.parseString(dataMemory[t.getColumn()][t.getRow()].ToString());
+								t.parseString(Integer.toHexString(t.getMemoryValue()-1));
+								//b of calling routine 
+								//pop top of stack
+								r3.parseString(dataMemory[t.getColumn()][t.getRow()].ToString());
+								t.parseString(Integer.toHexString(t.getMemoryValue()-1));
+								
+								//set addresses for the return
+								b.parseString(r3.getAddress());
+								p.parseString(r1.getAddress());
 								break;
 							case "01"://NEG
+								//pop top of the stack, make number negative
+								//pop top of stack
+								r1.parseString(dataMemory[t.getColumn()][t.getRow()].ToString());
+								t.parseString(Integer.toHexString(t.getMemoryValue()-1));
+								//do math magic
+								
+								//push result to the stack
+								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
+								dataMemory[t.getColumn()][t.getRow()].parseString(Integer.toHexString(r1.getMemoryValue()));
 								break;
 							case "02"://ADD
 								//pop top of stack
@@ -573,6 +592,15 @@ public class ShazamUI {
 						break;
 					case (byte)0x4: //CAL
 						//call subroutine
+						//push b onto stack
+						t.parseString(Integer.toHexString(t.getMemoryValue()+1));
+						dataMemory[t.getColumn()][t.getRow()].parseString(b.toString());
+						//push another b onto stack
+						t.parseString(Integer.toHexString(t.getMemoryValue()+1));
+						dataMemory[t.getColumn()][t.getRow()].parseString(b.toString());
+						//push p
+						t.parseString(Integer.toHexString(t.getMemoryValue()+1));
+						dataMemory[t.getColumn()][t.getRow()].parseString(t.toString());
 						break;
 					case (byte)0x5: //INT
 						//incriment t by address amount (address is 11 bits so 7FF = -1)
