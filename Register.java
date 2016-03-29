@@ -86,7 +86,11 @@ public class Register {
 				setRb2((byte)Integer.parseUnsignedInt(input.substring(1, 2), 16));
 				setRb3((byte)Integer.parseUnsignedInt(input.substring(2), 16));
 				break;
-			default: break;
+			default: 
+				setRb1((byte)Integer.parseUnsignedInt(input.substring(input.length()-3, input.length()-2), 16));
+				setRb2((byte)Integer.parseUnsignedInt(input.substring(input.length()-2, input.length()-1), 16));
+				setRb3((byte)Integer.parseUnsignedInt(input.substring(input.length()-1), 16));
+				break;
 		}
 	}
 	

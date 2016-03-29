@@ -83,6 +83,8 @@ public class InstructionMemoryPart {
 	public void parseString(String input){
 		int length = input.length();
 		switch(length){
+			case 0:
+				break;
 			case 1: 
 				setIB1((byte)0); 
 				setIB2((byte)0); 
@@ -118,7 +120,13 @@ public class InstructionMemoryPart {
 				setIB4((byte)Integer.parseUnsignedInt(input.substring(3, 4), 16));
 				setIB5((byte)Integer.parseUnsignedInt(input.substring(4), 16));
 				break;
-			default: break;
+			default: 
+				setIB1((byte)Integer.parseUnsignedInt(input.substring(input.length()-5, input.length()-4), 16));
+				setIB2((byte)Integer.parseUnsignedInt(input.substring(input.length()-4, input.length()-3), 16));
+				setIB3((byte)Integer.parseUnsignedInt(input.substring(input.length()-3, input.length()-2), 16));
+				setIB4((byte)Integer.parseUnsignedInt(input.substring(input.length()-2, input.length()-1), 16));
+				setIB5((byte)Integer.parseUnsignedInt(input.substring(input.length()-1), 16));
+				break;
 		}
 	}
 

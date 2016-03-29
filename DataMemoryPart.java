@@ -68,9 +68,19 @@ public class DataMemoryPart {
 		return output;
 	}
 	
+	public int getSignedValue(){
+		int output = getMemoryValue();
+		if(output > 32767){
+			output -= 65536;
+		}
+		return output;
+	}
+	
 	public void parseString(String input){
 		int length = input.length();
 		switch(length){
+			case 0:
+				break;
 			case 1: 
 				setDB1((byte)0);
 				setDB2((byte)0);
@@ -95,7 +105,12 @@ public class DataMemoryPart {
 				setDB3((byte)Integer.parseUnsignedInt(input.substring(2, 3), 16));
 				setDB4((byte)Integer.parseUnsignedInt(input.substring(3), 16));
 				break;
-			default: break;
+			default: 
+				setDB1((byte)Integer.parseUnsignedInt(input.substring(input.length()-4, input.length()-3), 16));
+				setDB2((byte)Integer.parseUnsignedInt(input.substring(input.length()-3, input.length()-2), 16));
+				setDB3((byte)Integer.parseUnsignedInt(input.substring(input.length()-2, input.length()-1), 16));
+				setDB4((byte)Integer.parseUnsignedInt(input.substring(input.length()-1), 16));
+				break;
 		}
 	}
 	
