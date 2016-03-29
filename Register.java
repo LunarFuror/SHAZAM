@@ -41,13 +41,13 @@ public class Register {
 	public int getRow(){
 		String output = "";
 		output = Integer.toHexString(rb1) + Integer.toHexString(rb2);
-		return Integer.parseUnsignedInt(output);
+		return Integer.parseUnsignedInt(output, 16);
 	}
 	
 	public int getColumn(){
 		String output = "";
 		output = Integer.toHexString(rb3);
-		return Integer.parseUnsignedInt(output);
+		return Integer.parseUnsignedInt(output, 16);
 	}
 
 	public byte[] getByteArray(){

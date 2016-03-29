@@ -73,11 +73,11 @@ public class ShazamUI {
 		b = new Register();
 		p = new Register();
 		t = new Register((byte)0x0,(byte)0x0,(byte)0x2);
-		r1.parseString("000");
-		r2.parseString("000");
-		r3.parseString("000");
-		r4.parseString("000");
-		r5.parseString("000");
+		r1.parseString("0000");
+		r2.parseString("0000");
+		r3.parseString("0000");
+		r4.parseString("0000");
+		r5.parseString("0000");
 		ir.parseString("00000");
 		//clear data
 		for(int i = 0x0; i < dataMemory.length; i++){
@@ -181,9 +181,12 @@ public class ShazamUI {
 			String fieldL = "";
 			String fieldN = "";
 			String fieldNC = "";
+			String fullLocation = "";
 			int location = 0;
 			int subLocation = 0;
 			int numInstructions = 0;
+			int newLocation = 0;
+			int newSubLocation = 0;
 			
 			switch (insLine[0]){
 				//parse instruction loading
@@ -207,11 +210,23 @@ public class ShazamUI {
 					}
 					else{
 						for(int i = 0; i <= numInstructions; i++){
+							
+							fullLocation = Integer.toHexString(Integer.parseUnsignedInt((Integer.toHexString(location) + Integer.toHexString(subLocation)), 16) + i);
+							if(fullLocation.length() == 1){
+								fullLocation = "00" + fullLocation;
+							}
+							if(fullLocation.length() == 2){
+								fullLocation = "0" + fullLocation;
+							}
+							
+							newLocation = Integer.parseUnsignedInt(fullLocation.substring(0, 2),16);
+							newSubLocation = Integer.parseUnsignedInt(fullLocation.substring(2),16);
+							
 							if((i*5)+5 < fieldNC.length()-1){
-								instructionMemory[location][subLocation + i].parseString(fieldNC.substring(i*5, (i*5)+5));
+								instructionMemory[newLocation][newSubLocation].parseString(fieldNC.substring(i*5, (i*5)+5));
 							}
 							else{
-								instructionMemory[location][subLocation + i].parseString(fieldNC.substring(i*5));
+								instructionMemory[newLocation][newSubLocation].parseString(fieldNC.substring(i*5));
 							}
 						}
 					}
@@ -268,27 +283,18 @@ public class ShazamUI {
 			writer = new PrintWriter("Trace"+time.atZone(zoneId).toEpochSecond()+time.getNano()+".txt", "UTF-8");
 			//start writing\
 			
-			String output = "";
-			int instruction = 0x000;
 			//Register effAddr = new Register();
 			boolean done = false;
 			//print trace out
-			writer.print("Interpreter --- Begin at location " + p.toString() + "  B = " + b.toString() + "  T = " + t.toString() + "\n"
-					+ "Trace is... On\n");
+			writer.print("Interpreter --- Begin at location " + p.ToString() + "  B = " + b.ToString() + "  T = " + t.ToString() + "\r\n"
+					+ "Trace is... On\r\n");
 			//while !done
 			while(!done){
-				output = "";
 				//write instruction number
-				if(instruction < 0x10){
-					writer.print("00");
-				}
-				if(instruction < 0x100){
-					writer.print("0");
-				}
-				writer.print(instruction + ": ");
+				writer.print(p.ToString() + ": ");
 				//IR = instructionMemory[p]
 				ir = instructionMemory[p.getRow()][p.getColumn()];
-				writer.print(ir.toString() + " B = " + b.toString() + " T = " + t.toString() + " ");
+				writer.print(ir.ToString() + " B = " + b.ToString() + " T = " + t.ToString() + " ");
 				//p++
 				p.parseString(Integer.toHexString(p.getMemoryValue()+1));
 				//parse code
@@ -381,10 +387,10 @@ public class ShazamUI {
 								t.parseString(Integer.toHexString(t.getMemoryValue()-1));
 								//push r1 onto stack
 								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
-								dataMemory[t.getColumn()][t.getRow()].parseString(r1.toString());
+								dataMemory[t.getColumn()][t.getRow()].parseString(r1.ToString());
 								//push another r1 onto stack
 								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
-								dataMemory[t.getColumn()][t.getRow()].parseString(r1.toString());
+								dataMemory[t.getColumn()][t.getRow()].parseString(r1.ToString());
 								break;
 							case "07"://EQL
 								//pop top of stack
@@ -501,7 +507,7 @@ public class ShazamUI {
 								//pop top of stack
 								r1.parseString(dataMemory[t.getColumn()][t.getRow()].ToString());
 								t.parseString(Integer.toHexString(t.getMemoryValue()-1));
-								output = r1.ToString();
+								writer.println("Put ------> " + r1.ToString());
 								break;
 							case "0F"://LDA
 								//pop top of stack
@@ -510,7 +516,7 @@ public class ShazamUI {
 								//put data on the stack
 								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 								dataMemory[t.getColumn()][t.getRow()].parseString(dataMemory[r1.getColumn()][r1.getRow()].ToString());
-								writer.print("DATA(" + t.toString() + ") <-- " + dataMemory[r1.getColumn()][r1.getRow()].ToString() + " ");
+								writer.print("DATA(" + t.ToString() + ") <-- " + dataMemory[r1.getColumn()][r1.getRow()].ToString() + " ");
 								break;
 							case "10"://STA
 								break;
@@ -525,7 +531,7 @@ public class ShazamUI {
 								//put data on the stack
 								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 								dataMemory[t.getColumn()][t.getRow()].parseString(dataMemory[r1.getColumn()][r1.getRow()].ToString());
-								writer.print("DATA(" + t.toString() + ") <-- " + dataMemory[r1.getColumn()][r1.getRow()].ToString() + " ");
+								writer.print("DATA(" + t.ToString() + ") <-- " + dataMemory[r1.getColumn()][r1.getRow()].ToString() + " ");
 								break;
 							case (byte)0x1: //caller's base +/- address = eff.addr.
 								//push value at eff.addr. onto stack 
@@ -536,7 +542,7 @@ public class ShazamUI {
 								//put data on the stack
 								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 								dataMemory[t.getColumn()][t.getRow()].parseString(dataMemory[r2.getColumn()][r2.getRow()].ToString());
-								writer.print("DATA(" + t.toString() + ") <-- " + dataMemory[r2.getColumn()][r2.getRow()].ToString() + " ");
+								writer.print("DATA(" + t.ToString() + ") <-- " + dataMemory[r2.getColumn()][r2.getRow()].ToString() + " ");
 								break;
 							case (byte)0x2: //caller's caller's base +/- address = eff.addr.
 								//push value at eff.addr. onto stack 
@@ -549,7 +555,7 @@ public class ShazamUI {
 								//put data on the stack
 								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 								dataMemory[t.getColumn()][t.getRow()].parseString(dataMemory[r3.getColumn()][r3.getRow()].ToString());
-								writer.print("DATA(" + t.toString() + ") <-- " + dataMemory[r3.getColumn()][r3.getRow()].ToString() + " ");
+								writer.print("DATA(" + t.ToString() + ") <-- " + dataMemory[r3.getColumn()][r3.getRow()].ToString() + " ");
 								break;
 						}
 						break;
@@ -594,13 +600,13 @@ public class ShazamUI {
 						//call subroutine
 						//push b onto stack
 						t.parseString(Integer.toHexString(t.getMemoryValue()+1));
-						dataMemory[t.getColumn()][t.getRow()].parseString(b.toString());
+						dataMemory[t.getColumn()][t.getRow()].parseString(b.ToString());
 						//push another b onto stack
 						t.parseString(Integer.toHexString(t.getMemoryValue()+1));
-						dataMemory[t.getColumn()][t.getRow()].parseString(b.toString());
+						dataMemory[t.getColumn()][t.getRow()].parseString(b.ToString());
 						//push p
 						t.parseString(Integer.toHexString(t.getMemoryValue()+1));
-						dataMemory[t.getColumn()][t.getRow()].parseString(t.toString());
+						dataMemory[t.getColumn()][t.getRow()].parseString(t.ToString());
 						break;
 					case (byte)0x5: //INT
 						//incriment t by address amount (address is 11 bits so 7FF = -1)
@@ -628,13 +634,10 @@ public class ShazamUI {
 						//
 						break;
 				}
-				instruction ++;
-				writer.print("\n");
-				if(!output.isEmpty()){
-					writer.println(output);
-				}
+				writer.print("\r\n");
 				//loop
 			}
+			writer.close();
 		}
 		catch(Exception ex){
 			ex.printStackTrace();
