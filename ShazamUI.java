@@ -280,6 +280,8 @@ public class ShazamUI {
 		LocalDateTime time = LocalDateTime.now();
 		ZoneId zoneId = ZoneId.systemDefault();
 		PrintWriter writer;
+		String resultState = "";
+		String resultAction = "";
 		
 		try {
 			writer = new PrintWriter("Trace"+time.atZone(zoneId).toEpochSecond()+time.getNano()+".txt", "UTF-8");
@@ -288,15 +290,15 @@ public class ShazamUI {
 			//Register effAddr = new Register();
 			boolean done = false;
 			//print trace out
-			writer.print("Interpreter --- Begin at location " + p.ToString().toUpperCase() + "  B = " + b.ToString().toUpperCase() + "  T = " + t.ToString().toUpperCase() + "\r\n"
+			System.out.print("Interpreter --- Begin at location " + p.ToString().toUpperCase() + "  B = " + b.ToString().toUpperCase() + "  T = " + t.ToString().toUpperCase() + "\r\n"
 					+ "Trace is... On\r\n");
 			//while !done
 			while(!done){
+				resultAction = "";
 				//write instruction number
-				writer.print(p.ToString().toUpperCase() + ": ");
+				System.out.print(p.ToString().toUpperCase() + ": ");
 				//IR = instructionMemory[p]
 				ir = instructionMemory[p.getRow()][p.getColumn()];
-				writer.print(ir.ToString().toUpperCase() + " B = " + b.ToString().toUpperCase() + " T = " + t.ToString().toUpperCase() + " ");
 				//p++
 				p.parseString(Integer.toHexString(p.getMemoryValue()+1));
 				//parse code
@@ -306,7 +308,7 @@ public class ShazamUI {
 						//put data on the stack
 						t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 						dataMemory[t.getRow()][t.getColumn()].parseString(ir.getAddress());
-						writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+						resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 						break;
 					case (byte)0x1: //OPR
 						//opr chart thing in interprate pdf
@@ -340,7 +342,7 @@ public class ShazamUI {
 								//push result to the stack
 								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 								dataMemory[t.getRow()][t.getColumn()].parseString(r1.ToString());
-								writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+								resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								break;
 							case "02"://ADD
 								//pop top of stack
@@ -352,7 +354,7 @@ public class ShazamUI {
 								//push result of r1 + r2 to the stack
 								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 								dataMemory[t.getRow()][t.getColumn()].parseString(Integer.toHexString(r1.getSignedValue() + r2.getSignedValue()));
-								writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+								resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								break;
 							case "03"://SUB
 								//pop top of stack
@@ -363,8 +365,8 @@ public class ShazamUI {
 								t.parseString(Integer.toHexString(t.getMemoryValue()-1));
 								//push result of r1 - r2 to the stack
 								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
-								dataMemory[t.getRow()][t.getColumn()].parseString(Integer.toHexString(r1.getSignedValue() - r2.getSignedValue()));
-								writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+								dataMemory[t.getRow()][t.getColumn()].parseString(Integer.toHexString(r2.getSignedValue() - r1.getSignedValue()));
+								resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								break;
 							case "04"://MUL
 								//pop top of stack
@@ -376,7 +378,7 @@ public class ShazamUI {
 								//push result of r1 * r2 to the stack
 								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 								dataMemory[t.getRow()][t.getColumn()].parseString(Integer.toHexString(r1.getSignedValue() * r2.getSignedValue()));
-								writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+								resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								break;
 							case "05"://DIV
 								//pop top of stack
@@ -387,8 +389,8 @@ public class ShazamUI {
 								t.parseString(Integer.toHexString(t.getMemoryValue()-1));
 								//push result of r1 / r2 to the stack
 								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
-								dataMemory[t.getRow()][t.getColumn()].parseString(Integer.toHexString(r1.getSignedValue() / r2.getSignedValue()));
-								writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+								dataMemory[t.getRow()][t.getColumn()].parseString(Integer.toHexString(r2.getSignedValue() / r1.getSignedValue()));
+								resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								break;
 							case "06"://DUP
 								//pop top of stack
@@ -397,11 +399,11 @@ public class ShazamUI {
 								//push r1 onto stack
 								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 								dataMemory[t.getRow()][t.getColumn()].parseString(r1.ToString().toUpperCase());
-								writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+								resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								//push another r1 onto stack
 								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 								dataMemory[t.getRow()][t.getColumn()].parseString(r1.ToString().toUpperCase());
-								writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+								resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								break;
 							case "07"://EQL
 								//pop top of stack
@@ -414,12 +416,12 @@ public class ShazamUI {
 								if(r1.getMemoryValue() == r2.getMemoryValue()){
 									t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 									dataMemory[t.getRow()][t.getColumn()].parseString("1");
-									writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+									resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								}
 								else{
 									t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 									dataMemory[t.getRow()][t.getColumn()].parseString("0");
-									writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+									resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								}
 								break;
 							case "08"://NEQ
@@ -433,12 +435,12 @@ public class ShazamUI {
 								if(r1.getMemoryValue() != r2.getMemoryValue()){
 									t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 									dataMemory[t.getRow()][t.getColumn()].parseString("1");
-									writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+									resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								}
 								else{
 									t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 									dataMemory[t.getRow()][t.getColumn()].parseString("0");
-									writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+									resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								}
 								break;
 							case "09"://LSS
@@ -452,12 +454,12 @@ public class ShazamUI {
 								if(r1.getMemoryValue() > r2.getMemoryValue()){
 									t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 									dataMemory[t.getRow()][t.getColumn()].parseString("1");
-									writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+									resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								}
 								else{
 									t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 									dataMemory[t.getRow()][t.getColumn()].parseString("0");
-									writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+									resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								}
 								break;
 							case "0A"://LEQ
@@ -471,12 +473,12 @@ public class ShazamUI {
 								if(r1.getMemoryValue() >= r2.getMemoryValue()){
 									t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 									dataMemory[t.getRow()][t.getColumn()].parseString("1");
-									writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+									resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								}
 								else{
 									t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 									dataMemory[t.getRow()][t.getColumn()].parseString("0");
-									writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+									resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								}
 								break;
 							case "0B"://GEQ
@@ -490,12 +492,12 @@ public class ShazamUI {
 								if(r1.getMemoryValue() <= r2.getMemoryValue()){
 									t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 									dataMemory[t.getRow()][t.getColumn()].parseString("1");
-									writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+									resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								}
 								else{
 									t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 									dataMemory[t.getRow()][t.getColumn()].parseString("0");
-									writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+									resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								}
 								break;
 							case "0C"://GTR
@@ -509,12 +511,12 @@ public class ShazamUI {
 								if(r1.getMemoryValue() < r2.getMemoryValue()){
 									t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 									dataMemory[t.getRow()][t.getColumn()].parseString("1");
-									writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+									resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								}
 								else{
 									t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 									dataMemory[t.getRow()][t.getColumn()].parseString("0");
-									writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+									resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								}
 								break;
 							case "0D"://GET
@@ -523,19 +525,19 @@ public class ShazamUI {
 									if(inputs.get(0).length()>4){
 										dataMemory[t.getRow()][t.getColumn()].parseString(inputs.get(0).substring(0, 4));
 										inputs.remove(0);
-										writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+										resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 									}
 									else{
 										dataMemory[t.getRow()][t.getColumn()].parseString(inputs.get(0));
 										inputs.remove(0);
-										writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+										resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 									}
 								break;
 							case "0E"://PUT
 								//pop top of stack
 								r1.parseString(dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase());
 								t.parseString(Integer.toHexString(t.getMemoryValue()-1));
-								writer.println("\r\nPut ------> " + r1.ToString().toUpperCase());
+								resultAction += ("\r\nPut ------> " + r1.ToString().toUpperCase());
 								break;
 							case "0F"://LDA
 								//pop top of stack
@@ -544,7 +546,7 @@ public class ShazamUI {
 								//put data on the stack
 								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 								dataMemory[t.getRow()][t.getColumn()].parseString(dataMemory[r1.getRow()][r1.getColumn()].ToString().toUpperCase());
-								writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+								resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								break;
 							case "10"://STA
 								break;
@@ -559,7 +561,7 @@ public class ShazamUI {
 								//put data on the stack
 								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 								dataMemory[t.getRow()][t.getColumn()].parseString(dataMemory[r1.getRow()][r1.getColumn()].ToString().toUpperCase());
-								writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+								resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								break;
 							case (byte)0x1: //caller's base +/- address = eff.addr.
 								//push value at eff.addr. onto stack 
@@ -570,7 +572,7 @@ public class ShazamUI {
 								//put data on the stack
 								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 								dataMemory[t.getRow()][t.getColumn()].parseString(dataMemory[r2.getRow()][r2.getColumn()].ToString().toUpperCase());
-								writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+								resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								break;
 							case (byte)0x2: //caller's caller's base +/- address = eff.addr.
 								//push value at eff.addr. onto stack 
@@ -583,7 +585,7 @@ public class ShazamUI {
 								//put data on the stack
 								t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 								dataMemory[t.getRow()][t.getColumn()].parseString(dataMemory[r3.getRow()][r3.getColumn()].ToString().toUpperCase());
-								writer.print("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+								resultAction += ("DATA(" + t.ToString().toUpperCase() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 								break;
 						}
 						break;
@@ -596,7 +598,7 @@ public class ShazamUI {
 								//put data from the top of stack at the effective address
 								dataMemory[r1.getRow()][r1.getColumn()].parseString(dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase());
 								t.parseString(Integer.toHexString(t.getMemoryValue()-1));
-								writer.print("DATA(" + r1.getAddress() + ") <-- " + dataMemory[r1.getRow()][r1.getColumn()].ToString().toUpperCase() + " ");
+								resultAction += ("DATA(" + r1.getAddress() + ") <-- " + dataMemory[r1.getRow()][r1.getColumn()].ToString().toUpperCase() + " ");
 								break;
 							case (byte)0x1: //caller's base +/- address = eff.addr.
 								//pop top of stack, put at eff.addr.
@@ -607,7 +609,7 @@ public class ShazamUI {
 								//put data from the top of stack at the effective address
 								dataMemory[r2.getRow()][r2.getColumn()].parseString(dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase());
 								t.parseString(Integer.toHexString(t.getMemoryValue()-1));
-								writer.print("DATA(" + r2.getAddress() + ") <-- " + dataMemory[r2.getRow()][r2.getColumn()].ToString().toUpperCase() + " ");
+								resultAction += ("DATA(" + r2.getAddress() + ") <-- " + dataMemory[r2.getRow()][r2.getColumn()].ToString().toUpperCase() + " ");
 								break;
 							case (byte)0x2: //caller's caller's base +/- address = eff.addr.
 								//pop top of stack, put at eff.addr.
@@ -620,28 +622,26 @@ public class ShazamUI {
 								//put data from the top of stack at the effective address
 								dataMemory[r3.getRow()][r3.getColumn()].parseString(dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase());
 								t.parseString(Integer.toHexString(t.getMemoryValue()-1));
-								writer.print("DATA(" + r3.getAddress() + ") <-- " + dataMemory[r3.getRow()][r3.getColumn()].ToString().toUpperCase() + " ");
+								resultAction += ("DATA(" + r3.getAddress() + ") <-- " + dataMemory[r3.getRow()][r3.getColumn()].ToString().toUpperCase() + " ");
 								break;
 						}
 						break;
 					case (byte)0x4: //CAL
 						//call subroutine
-						
-						//store t to use as b later
-						r1.parseString(t.ToString());
-
 						//push b onto stack
 						t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 						dataMemory[t.getRow()][t.getColumn()].parseString(b.ToString().toUpperCase());
-						writer.print("DATA(" + t.ToString() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+						resultAction += ("DATA(" + t.ToString() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+						//store t to use as b later
+						r1.parseString(t.ToString());
 						//push another b onto stack
 						t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 						dataMemory[t.getRow()][t.getColumn()].parseString(b.ToString().toUpperCase());
-						writer.print("DATA(" + t.ToString() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+						resultAction += ("DATA(" + t.ToString() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 						//push p
 						t.parseString(Integer.toHexString(t.getMemoryValue()+1));
 						dataMemory[t.getRow()][t.getColumn()].parseString(p.ToString().toUpperCase());
-						writer.print("DATA(" + t.ToString() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
+						resultAction += ("DATA(" + t.ToString() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 						
 						b.parseString(r1.getAddress());
 						p.parseString(ir.getAddress());
@@ -666,7 +666,6 @@ public class ShazamUI {
 								}
 								else
 								{
-									p.parseString(Integer.toHexString(p.getMemoryValue()+1));
 								}
 								break;
 							case (byte)0x2: //JPT
@@ -689,7 +688,9 @@ public class ShazamUI {
 						writer.print("DATA(" + t.ToString() + ") <-- " + dataMemory[t.getRow()][t.getColumn()].ToString().toUpperCase() + " ");
 						break;
 				}
-				writer.print("\r\n");
+				resultState = ir.ToString().toUpperCase() + " B = " + b.ToString().toUpperCase() + " T = " + t.ToString().toUpperCase() + " ";
+				System.out.print(resultState + resultAction);
+				System.out.print("\r\n");
 				//loop
 			}
 			writer.close();
