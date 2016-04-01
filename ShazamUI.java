@@ -683,8 +683,9 @@ public class ShazamUI {
 								break;
 						}
 						break;
-					case (byte)0x7: //ADR
-						//
+					case (byte)0x7: //ADR push the combined level and address onto the stack.
+						t.parseString(Integer.toHexString(t.getMemoryValue()+1));
+						dataMemory[t.getRow()][t.getColumn()].parseString(Integer.toHexString(ir.getIB2()) + ir.getAddress());
 						break;
 				}
 				writer.print("\r\n");
