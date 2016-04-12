@@ -48,10 +48,14 @@ public class ShazamUI {
 					break;
 				case "run": 
 					run();
+					System.out.println("Program run, results have been output");
 					break;
 				case "exit": 
+					System.out.println("Good Bye!");
 					break;
-				default: break;
+				default: 
+					System.out.println("Unrecognized Command"); 
+					break;
 			}
 		}
 		
@@ -164,6 +168,61 @@ public class ShazamUI {
 	
 	//Load all the things!
 	public void load(){
+		//Interprater Pass 1
+		File assembler1 = null;
+		Scanner fileAssemble1 = null;
+		LocalDateTime time = LocalDateTime.now();
+		ZoneId zoneId = ZoneId.systemDefault();
+		PrintWriter writer;
+		String assembler1Line = "";
+		String assembler1Label = "";
+		String assembler1Opcode = "";
+		String assembler1Level = "";
+		String assembler1Operand = "";
+		String assembler1Comment = "";
+		int programLevel = 0x0;
+		
+		try{
+			assembler1 = new File("Assembler.in.txt");
+			fileAssemble1 = new Scanner(assembler1);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		try {
+			writer = new PrintWriter("AssemblerSansComments"+time.atZone(zoneId).toEpochSecond()+time.getNano()+".txt", "UTF-8");
+			//read Assembler file
+			while(fileAssemble1.hasNextLine()){
+				//store line for processing
+				assembler1Line = fileAssemble1.nextLine();
+				//if it's not a comment
+				if(!assembler1Line.startsWith("*")){
+					//write out the line
+					writer.println(assembler1Line);
+					//split the line into usable parts.
+					assembler1Label = assembler1Line.substring(0, 8);
+					assembler1Opcode = assembler1Line.substring(9, 17);
+					assembler1Level = assembler1Line.substring(18, 19);
+					assembler1Operand = assembler1Line.substring(20, 28);
+					assembler1Comment = assembler1Line.substring(30);
+					
+					if(assembler1Opcode.equals("PROC")){
+						programLevel ++;
+					}
+				}
+			}
+			
+			writer.close();
+		}
+		catch(Exception ex){
+		}
+		fileAssemble1.close();
+		
+		//Interprater Pass 2
+		
+		
+		//Load Final
 		File input = null;
 		Scanner fileIn = null;
 		try{
@@ -276,6 +335,7 @@ public class ShazamUI {
 		fileIn.close();
 	}
 
+	//Run all the things!
 	public void run(){
 		LocalDateTime time = LocalDateTime.now();
 		ZoneId zoneId = ZoneId.systemDefault();
