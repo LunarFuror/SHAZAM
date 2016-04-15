@@ -42,6 +42,10 @@ public class ShazamUI {
 					dump();
 					System.out.println("Memory Dumped");
 					break;
+				case "assemble":
+					assemble();
+					System.out.println("Program assembled, ready for load");
+					break;
 				case "load": 
 					load();
 					System.out.println("Memory Loaded");
@@ -166,9 +170,7 @@ public class ShazamUI {
 		}
 	}
 	
-	//Load all the things!
-	public void load(){
-		//Interprater Pass 1
+	public void assemble(){
 		File assembler1 = null;
 		Scanner fileAssemble1 = null;
 		LocalDateTime time = LocalDateTime.now();
@@ -182,24 +184,18 @@ public class ShazamUI {
 		String assembler1Comment = "";
 		int programLevel = 0x0;
 		
+		//Assembler Pass 1
 		try{
+			//load assembler file
 			assembler1 = new File("Assembler.in.txt");
 			fileAssemble1 = new Scanner(assembler1);
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		try {
-			writer = new PrintWriter("AssemblerSansComments"+time.atZone(zoneId).toEpochSecond()+time.getNano()+".txt", "UTF-8");
+			
 			//read Assembler file
 			while(fileAssemble1.hasNextLine()){
 				//store line for processing
 				assembler1Line = fileAssemble1.nextLine();
-				//if it's not a comment
+				//if it's not a comment do some stuff
 				if(!assembler1Line.startsWith("*")){
-					//write out the line
-					writer.println(assembler1Line);
 					//split the line into usable parts.
 					assembler1Label = assembler1Line.substring(0, 8);
 					assembler1Opcode = assembler1Line.substring(9, 17);
@@ -207,22 +203,35 @@ public class ShazamUI {
 					assembler1Operand = assembler1Line.substring(20, 28);
 					assembler1Comment = assembler1Line.substring(30);
 					
-					if(assembler1Opcode.equals("PROC")){
-						programLevel ++;
-					}
+					//procedures only have access to their OWN vars.
+					//procedure ST's have var, label, and inst ST's
 				}
 			}
 			
+			fileAssemble1.close();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		try {
+			//create output file
+			writer = new PrintWriter("AssemblerSansComments"+time.atZone(zoneId).toEpochSecond()+time.getNano()+".txt", "UTF-8");
+			//write output
+			
+			//close writer
 			writer.close();
 		}
 		catch(Exception ex){
 		}
-		fileAssemble1.close();
 		
-		//Interprater Pass 2
+		//Assembler Pass 2
 		
-		
-		//Load Final
+	}
+	
+	//Load all the things!
+	public void load(){
+		//Load
 		File input = null;
 		Scanner fileIn = null;
 		try{
