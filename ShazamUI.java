@@ -68,9 +68,10 @@ public class ShazamUI {
 	
 	//Print all the things!
 	public void printMenu(){
-		System.out.println("Type your choice and hit enter\n" +
+		System.out.println("\nType your choice and hit enter\n\n" +
 				"Clear\n" +
 				"Dump\n" +
+				"Assemble\n" +
 				"Load\n" +
 				"Run\n" +
 				"Exit");
@@ -170,6 +171,7 @@ public class ShazamUI {
 		}
 	}
 	
+	//All the things... AAASSSSEEMMMMBLLLLLLEEEEEE
 	public void assemble(){
 		File assembler1 = null;
 		Scanner fileAssemble1 = null;
@@ -181,8 +183,12 @@ public class ShazamUI {
 		String assembler1Opcode = "";
 		String assembler1Level = "";
 		String assembler1Operand = "";
-		String assembler1Comment = "";
 		int programLevel = 0x0;
+		int instructionCounter = 0x0;
+		int procedureIndex = -1;
+		Vector<AssemblerProcedure> procedureTable = new Vector<AssemblerProcedure>();
+		//Vector<String> procedureShell = new Vector<String>();
+		AssemblerProcedure currentProcedure = new AssemblerProcedure();
 		
 		//Assembler Pass 1
 		try{
@@ -201,24 +207,78 @@ public class ShazamUI {
 					assembler1Opcode = assembler1Line.substring(9, 17);
 					assembler1Level = assembler1Line.substring(18, 19);
 					assembler1Operand = assembler1Line.substring(20, 28);
-					assembler1Comment = assembler1Line.substring(30);
 					
-					//procedures only have access to their OWN vars.
-					//procedure ST's have var, label, and inst ST's
+					if(assembler1Label.contains(":")){
+						procedureTable.get(procedureIndex).addLabel(Integer.toHexString(instructionCounter), assembler1Label);
+					}
+					
+					switch(assembler1Opcode.trim().toUpperCase()){
+						case "PROC":
+							programLevel ++;
+							currentProcedure = new AssemblerProcedure(Integer.toHexString(instructionCounter), assembler1Label, programLevel);
+							procedureTable.add(currentProcedure);
+							procedureIndex++;
+							break;
+							
+						case "VAR":
+							procedureTable.get(procedureIndex).addVariable(assembler1Label, "");
+							break;
+							
+						case "BEGIN":
+							procedureTable.get(procedureIndex).addInstruction(Integer.toHexString(instructionCounter), assembler1Level, assembler1Opcode, assembler1Operand);
+							procedureTable.get(procedureIndex).setLocation(Integer.toHexString(instructionCounter));
+							instructionCounter ++;
+							break;
+							
+						case "END":
+							programLevel--;
+							procedureIndex--;
+							break;
+							
+						default:
+							procedureTable.get(procedureIndex).addInstruction(Integer.toHexString(instructionCounter), assembler1Level, assembler1Opcode, assembler1Operand);
+							instructionCounter ++;
+							break;
+					}
 				}
 			}
-			
 			fileAssemble1.close();
 		}
 		catch(Exception e){
 			e.printStackTrace();
 		}
 		
+		//try to write the table thingy
 		try {
 			//create output file
-			writer = new PrintWriter("AssemblerSansComments"+time.atZone(zoneId).toEpochSecond()+time.getNano()+".txt", "UTF-8");
+			writer = new PrintWriter("SymbolTables"+time.atZone(zoneId).toEpochSecond()+time.getNano()+".txt", "UTF-8");
 			//write output
-			
+			writer.println("Dump of Symbol Tables... \r\n");
+			for(AssemblerProcedure proc: procedureTable){
+				writer.println("PROCEDURE... " + proc.getLabel().toUpperCase() + "\r\n");
+				writer.println("IDENTIFIER\tLOCATION\tLEVEL");
+				writer.println(" " + proc.getLabel().toUpperCase() + "\t " + proc.getLocation().toUpperCase() + "\t\t " + proc.getLevelString());
+				//loop through labels and stuff
+				for(AssemblerLabel label: proc.labelTable){
+					writer.println(" " + label.getLabel().toUpperCase() + "\t " + label.getLocation().toUpperCase() + "\t\t " + proc.getLevelString());
+				}
+				//variable space required
+				writer.println("\r\n" + proc.getLabel().toUpperCase() + "... VARIABLES\tTOTAL SPACE REQUIRED: " + proc.getVariableCount() );
+				//variables
+				writer.println("\r\nIDENTIFIER\tOFFSET\tNUMBER OF WORDS");
+				for(AssemblerVariable var: proc.variableTable){
+					writer.println(" " + var.getLabel().toUpperCase() + "\t " + var.getLocation().toUpperCase() + "\t\t 0001");
+				}
+				//main space required
+				writer.println("\r\n" + proc.getLabel().toUpperCase() + "... INSTRUCTIONS\tTOTAL SPACE REQUIRED: " + proc.getInstructionCount() );
+				//variables
+				writer.println("\r\nOP/PSEUDO-OP\tLEVEL\t\tOPERAND");
+				for(AssemblerInstruction ins: proc.instructionTable){
+					writer.println(" " + ins.getOpcode().toUpperCase() + "\t " + ins.getLevel().toUpperCase() + "\t\t" + ins.getOperand());
+				}
+				//instructions
+				writer.println("\r\n----------------------------------------------------\r\n");
+			}
 			//close writer
 			writer.close();
 		}
