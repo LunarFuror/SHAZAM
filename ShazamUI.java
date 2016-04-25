@@ -187,7 +187,7 @@ public class ShazamUI {
 		int instructionCounter = 0x0;
 		int procedureIndex = -1;
 		Vector<AssemblerProcedure> procedureTable = new Vector<AssemblerProcedure>();
-		//Vector<String> procedureShell = new Vector<String>();
+		Vector<String> procedureShell = new Vector<String>();
 		AssemblerProcedure currentProcedure = new AssemblerProcedure();
 		
 		//Assembler Pass 1
@@ -217,7 +217,8 @@ public class ShazamUI {
 							programLevel ++;
 							currentProcedure = new AssemblerProcedure(Integer.toHexString(instructionCounter), assembler1Label, programLevel);
 							procedureTable.add(currentProcedure);
-							procedureIndex++;
+							procedureShell.add(assembler1Label);
+							procedureIndex = getAssemblerIndex(assembler1Label, procedureTable);
 							break;
 							
 						case "VAR":
@@ -232,7 +233,8 @@ public class ShazamUI {
 							
 						case "END":
 							programLevel--;
-							procedureIndex--;
+							procedureShell.remove(procedureShell.size()-1);
+							procedureIndex = getAssemblerIndex(procedureShell.get(procedureShell.size()-1), procedureTable);
 							break;
 							
 						default:
@@ -830,4 +832,15 @@ public class ShazamUI {
 		System.out.println("Program Run");
 	}
 	
+	public int getAssemblerIndex(String searchName, Vector<AssemblerProcedure> procedureTable){
+		int index = -1;
+		int output = 0;
+		for(AssemblerProcedure proc : procedureTable){
+			if(searchName.compareToIgnoreCase(proc.getLabel()) == 0){
+				output = index;
+			}
+			index ++;
+		}
+		return output;
+	}
 }
